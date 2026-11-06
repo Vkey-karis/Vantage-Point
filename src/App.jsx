@@ -8,6 +8,7 @@ import Process from './components/Process';
 import Pricing from './components/Pricing';
 import Footer from './components/Footer';
 import AuditModal from './components/AuditModal';
+import FloatingContact from './components/FloatingContact';
 
 export default function App() {
   const [isAuditModalOpen, setIsAuditModalOpen] = useState(false);
@@ -45,6 +46,9 @@ export default function App() {
 
       {/* Interactive Free Audit Modal */}
       <AuditModal isOpen={isAuditModalOpen} onClose={handleCloseAudit} />
+
+      {/* Persistent floating WhatsApp / Call button */}
+      <FloatingContact />
     </div>
   );
 }
