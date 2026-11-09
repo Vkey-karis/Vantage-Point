@@ -1,14 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import Navbar from './components/Navbar';
-import Hero from './components/Hero';
-import Trust from './components/Trust';
-import Work from './components/Work';
-import Services from './components/Services';
-import Process from './components/Process';
-import Pricing from './components/Pricing';
 import Footer from './components/Footer';
 import AuditModal from './components/AuditModal';
 import FloatingContact from './components/FloatingContact';
+import Home from './pages/Home';
+import Blog from './pages/Blog';
+import SinglePost from './pages/SinglePost';
+
+// Automatically scroll to top on route change
+function ScrollToTop() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
+  return null;
+}
 
 export default function App() {
   const [isAuditModalOpen, setIsAuditModalOpen] = useState(false);
@@ -17,38 +26,28 @@ export default function App() {
   const handleCloseAudit = () => setIsAuditModalOpen(false);
 
   return (
-    <div id="top" className="min-h-screen bg-[#0A192F] text-white selection:bg-[#D4AF37] selection:text-[#0A192F]">
-      {/* Sticky Navigation with clear background logo */}
-      <Navbar onOpenAudit={handleOpenAudit} />
+    <BrowserRouter>
+      <ScrollToTop />
+      <div id="top" className="min-h-screen bg-[#0A192F] text-white selection:bg-[#D4AF37] selection:text-[#0A192F] flex flex-col justify-between">
+        {/* Sticky Navigation */}
+        <Navbar onOpenAudit={handleOpenAudit} />
 
-      <main>
-        {/* Hero Section (Light Theme #F3F4F6) with tight cohesive device cluster */}
-        <Hero onOpenAudit={handleOpenAudit} />
+        {/* Application Page Routing */}
+        <Routes>
+          <Route path="/" element={<Home onOpenAudit={handleOpenAudit} />} />
+          <Route path="/blog" element={<Blog />} />
+          <Route path="/blog/:slug" element={<SinglePost />} />
+        </Routes>
 
-        {/* 'Why Us' / Trust Section: More than just a website */}
-        <Trust />
+        {/* Footer with white & gold logo */}
+        <Footer />
 
-        {/* Selected Work Portfolio */}
-        <Work />
+        {/* Interactive Free Audit Modal */}
+        <AuditModal isOpen={isAuditModalOpen} onClose={handleCloseAudit} />
 
-        {/* Services Bento Box: Perfectly Symmetrical Grid */}
-        <Services />
-
-        {/* Strategic Delivery Process */}
-        <Process />
-
-        {/* Pricing Tiers: Uniform height cards with bottom-pinned CTA */}
-        <Pricing onOpenAudit={handleOpenAudit} />
-      </main>
-
-      {/* Footer with white & gold logo */}
-      <Footer />
-
-      {/* Interactive Free Audit Modal */}
-      <AuditModal isOpen={isAuditModalOpen} onClose={handleCloseAudit} />
-
-      {/* Persistent floating WhatsApp / Call button */}
-      <FloatingContact />
-    </div>
+        {/* Persistent floating WhatsApp / Call button */}
+        <FloatingContact />
+      </div>
+    </BrowserRouter>
   );
 }

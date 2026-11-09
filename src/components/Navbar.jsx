@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, ArrowUpRight } from 'lucide-react';
 
 export default function Navbar({ onOpenAudit }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const location = useLocation();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -13,11 +15,14 @@ export default function Navbar({ onOpenAudit }) {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const isHome = location.pathname === '/';
+
   const navLinks = [
-    { label: 'Work', href: '#work' },
-    { label: 'Services', href: '#services' },
-    { label: 'Process', href: '#process' },
-    { label: 'Pricing', href: '#pricing' },
+    { label: 'Work', href: isHome ? '#work' : '/#work', isExternal: false },
+    { label: 'Services', href: isHome ? '#services' : '/#services', isExternal: false },
+    { label: 'Process', href: isHome ? '#process' : '/#process', isExternal: false },
+    { label: 'Pricing', href: isHome ? '#pricing' : '/#pricing', isExternal: false },
+    { label: 'Blog', href: '/blog', isExternal: false },
   ];
 
   return (
@@ -30,7 +35,7 @@ export default function Navbar({ onOpenAudit }) {
     >
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 h-20 flex items-center justify-between">
         {/* Brand Logo with Navy Mark on Transparent Background */}
-        <a href="#" className="flex items-center gap-3 group tracking-wider">
+        <Link to="/" className="flex items-center gap-3 group tracking-wider">
           <img
             src="/images/logo-navy.png"
             alt="Vantage Point Digital Logo"
@@ -44,19 +49,33 @@ export default function Navbar({ onOpenAudit }) {
               DIGITAL
             </span>
           </div>
-        </a>
+        </Link>
 
         {/* Center / Navigation Links (Desktop) */}
         <div className="hidden md:flex items-center space-x-8 lg:space-x-10">
-          {navLinks.map((link) => (
-            <a
-              key={link.label}
-              href={link.href}
-              className="text-xs uppercase tracking-widest text-[#0A192F]/80 hover:text-[#0A192F] font-semibold transition-colors duration-200 relative py-1 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[2px] after:bg-[#D4AF37] hover:after:w-full after:transition-all after:duration-300"
-            >
-              {link.label}
-            </a>
-          ))}
+          {navLinks.map((link) =>
+            link.href.startsWith('#') || link.href.startsWith('/#') ? (
+              <a
+                key={link.label}
+                href={link.href}
+                className="text-xs uppercase tracking-widest text-[#0A192F]/80 hover:text-[#0A192F] font-semibold transition-colors duration-200 relative py-1 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[2px] after:bg-[#D4AF37] hover:after:w-full after:transition-all after:duration-300"
+              >
+                {link.label}
+              </a>
+            ) : (
+              <Link
+                key={link.label}
+                to={link.href}
+                className={`text-xs uppercase tracking-widest font-semibold transition-colors duration-200 relative py-1 after:content-[''] after:absolute after:bottom-0 after:left-0 after:h-[2px] after:bg-[#D4AF37] hover:after:w-full after:transition-all after:duration-300 ${
+                  location.pathname === link.href
+                    ? 'text-[#0A192F] after:w-full'
+                    : 'text-[#0A192F]/80 hover:text-[#0A192F] after:w-0'
+                }`}
+              >
+                {link.label}
+              </Link>
+            )
+          )}
         </div>
 
         {/* Far Right Action Button (Desktop) */}
@@ -86,16 +105,27 @@ export default function Navbar({ onOpenAudit }) {
       {mobileMenuOpen && (
         <div className="md:hidden bg-[#F3F4F6] border-b border-black/10 px-6 py-6 space-y-4 shadow-xl animate-fadeIn">
           <div className="flex flex-col space-y-3">
-            {navLinks.map((link) => (
-              <a
-                key={link.label}
-                href={link.href}
-                onClick={() => setMobileMenuOpen(false)}
-                className="text-sm font-semibold uppercase tracking-widest text-[#0A192F] hover:text-[#D4AF37] py-2 border-b border-black/5 transition-colors"
-              >
-                {link.label}
-              </a>
-            ))}
+            {navLinks.map((link) =>
+              link.href.startsWith('#') || link.href.startsWith('/#') ? (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-sm font-semibold uppercase tracking-widest text-[#0A192F] hover:text-[#D4AF37] py-2 border-b border-black/5 transition-colors"
+                >
+                  {link.label}
+                </a>
+              ) : (
+                <Link
+                  key={link.label}
+                  to={link.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-sm font-semibold uppercase tracking-widest text-[#0A192F] hover:text-[#D4AF37] py-2 border-b border-black/5 transition-colors"
+                >
+                  {link.label}
+                </Link>
+              )
+            )}
           </div>
           <div className="pt-2">
             <button
