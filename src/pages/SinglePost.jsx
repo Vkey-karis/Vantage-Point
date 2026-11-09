@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { client, urlFor } from '../lib/sanityClient';
 import { PortableText } from '@portabletext/react';
-import { Calendar, ArrowLeft, Clock } from 'lucide-react';
+import { Calendar, ArrowLeft, User, Tag, Clock } from 'lucide-react';
 
 export default function SinglePost() {
   const { slug } = useParams();
@@ -10,12 +10,13 @@ export default function SinglePost() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // GROQ query to fetch post matching slug
+    // GROQ query to fetch post along with expanded author, categories, and SEO data
     const query = `*[_type == "post" && slug.current == $slug][0] {
       _id,
       title,
       slug,
       publishedAt,
+      excerpt,
       mainImage {
         asset->{
           _id,
@@ -23,7 +24,32 @@ export default function SinglePost() {
         },
         alt
       },
-      body
+      author->{
+        _id,
+        name,
+        image {
+          asset->{
+            _id,
+            url
+          }
+        },
+        bio
+      },
+      categories[]->{
+        _id,
+        title
+      },
+      body,
+      seo {
+        metaTitle,
+        metaDescription,
+        shareImage {
+          asset->{
+            _id,
+            url
+          }
+        }
+      }
     }`;
 
     client
@@ -102,7 +128,6 @@ export default function SinglePost() {
       ),
     },
     types: {
-      // Inline images serializer using Sanity's urlFor builder
       image: ({ value }) => {
         if (!value?.asset?._ref && !value?.asset?._id && !value?.asset?.url) {
           return null;
@@ -117,9 +142,9 @@ export default function SinglePost() {
                 loading="lazy"
               />
             </div>
-            {value.alt && (
+            {(value.caption || value.alt) && (
               <figcaption className="text-center text-xs text-gray-400 mt-3 font-sans">
-                {value.alt}
+                {value.caption || value.alt}
               </figcaption>
             )}
           </figure>
@@ -171,13 +196,79 @@ export default function SinglePost() {
             className="inline-flex items-center gap-2 text-xs uppercase tracking-widest text-gray-400 hover:text-[#D4AF37] transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span>Back to all articles</span>
+            <span>Back to Journal</span>
           </Link>
         </div>
 
-        {/* Large Hero Image at the top */}
+        {/* Categories Badges */}
+        {post.categories && post.categories.length > 0 && (
+          <div className="flex flex-wrap items-center gap-2 mb-6">
+            {post.categories.map((cat) => (
+              <span
+                key={cat._id || cat.title}
+                className="text-[11px] font-semibold tracking-widest uppercase text-[#D4AF37] px-3.5 py-1 rounded-full border border-[#D4AF37]/30 bg-[#D4AF37]/10"
+              >
+                {cat.title}
+              </span>
+            ))}
+          </div>
+        )}
+
+        {/* Title: Playfair Display, Massive */}
+        <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl font-bold text-white tracking-tight leading-[1.12] mb-6">
+          {post.title}
+        </h1>
+
+        {/* Subtitle / Excerpt Lead */}
+        {post.excerpt && (
+          <p className="font-sans text-lg sm:text-xl text-gray-300 leading-relaxed mb-8">
+            {post.excerpt}
+          </p>
+        )}
+
+        {/* Premium Author & Published Date Metadata Bar */}
+        <div className="flex flex-wrap items-center justify-between gap-6 py-6 border-y border-white/10 mb-10">
+          {/* Author */}
+          <div className="flex items-center gap-3.5">
+            {post.author?.image ? (
+              <img
+                src={urlFor(post.author.image).width(96).height(96).fit('crop').url()}
+                alt={post.author.name}
+                className="w-11 h-11 rounded-full object-cover border-2 border-[#D4AF37]/40 shadow-md"
+              />
+            ) : (
+              <div className="w-11 h-11 rounded-full bg-[#112240] border border-white/10 flex items-center justify-center text-[#D4AF37]">
+                <User className="w-5 h-5" />
+              </div>
+            )}
+            <div>
+              <span className="text-[10px] uppercase tracking-widest text-gray-400 block font-sans">
+                WRITTEN BY
+              </span>
+              <span className="text-sm font-semibold text-white tracking-wide">
+                {post.author?.name || 'Vantage Point Editorial'}
+              </span>
+            </div>
+          </div>
+
+          {/* Published Date */}
+          {post.publishedAt && (
+            <div className="flex items-center gap-2 text-xs text-gray-400 font-sans">
+              <Calendar className="w-4 h-4 text-[#D4AF37]" />
+              <span>
+                {new Date(post.publishedAt).toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                })}
+              </span>
+            </div>
+          )}
+        </div>
+
+        {/* Large Featured Hero Image */}
         {post.mainImage && (
-          <div className="relative w-full h-[320px] sm:h-[460px] lg:h-[540px] rounded-3xl overflow-hidden border border-white/10 shadow-2xl mb-10 bg-[#112240]">
+          <div className="relative w-full h-[320px] sm:h-[460px] lg:h-[540px] rounded-3xl overflow-hidden border border-white/10 shadow-2xl mb-12 bg-[#112240]">
             <img
               src={urlFor(post.mainImage).width(1400).height(800).url()}
               alt={post.mainImage.alt || post.title}
@@ -185,25 +276,6 @@ export default function SinglePost() {
             />
           </div>
         )}
-
-        {/* Post Metadata: Date */}
-        {post.publishedAt && (
-          <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-gray-400 mb-6 font-sans">
-            <Calendar className="w-3.5 h-3.5 text-[#D4AF37]" />
-            <span>
-              {new Date(post.publishedAt).toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-              })}
-            </span>
-          </div>
-        )}
-
-        {/* Title: Playfair Display, Massive */}
-        <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl font-bold text-white tracking-tight leading-[1.12] mb-10 pb-8 border-b border-white/10">
-          {post.title}
-        </h1>
 
         {/* Body Content with PortableText */}
         <div className="prose-custom max-w-none">
@@ -225,7 +297,7 @@ export default function SinglePost() {
           </Link>
           <a
             href="#top"
-            className="text-xs uppercase tracking-widest text-gray-400 hover:text-white"
+            className="text-xs uppercase tracking-widest text-gray-400 hover:text-white transition-colors"
           >
             Back to Top ↑
           </a>
