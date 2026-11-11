@@ -57,10 +57,16 @@ export default function SinglePost() {
       .then((data) => {
         setPost(data);
         setLoading(false);
+        if (typeof window !== 'undefined') {
+          window.__REVI_READY__ = true;
+        }
       })
       .catch((err) => {
         console.error('Failed to fetch post from Sanity:', err);
         setLoading(false);
+        if (typeof window !== 'undefined') {
+          window.__REVI_READY__ = true;
+        }
       });
   }, [slug]);
 

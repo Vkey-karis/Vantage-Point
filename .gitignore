@@ -10,8 +10,11 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
+dist-prerendered
 *.local
 .sanity
+*.rar
+*.zip
 
 # Editor directories and files
 .vscode/*

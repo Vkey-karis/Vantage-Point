@@ -1,4 +1,5 @@
 {
+  "outputDirectory": "dist-prerendered",
   "rewrites": [
     {
       "source": "/(.*)",

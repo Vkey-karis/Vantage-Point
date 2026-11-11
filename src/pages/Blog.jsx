@@ -39,10 +39,16 @@ export default function Blog() {
       .then((data) => {
         setPosts(data || []);
         setLoading(false);
+        if (typeof window !== 'undefined') {
+          window.__REVI_READY__ = true;
+        }
       })
       .catch((err) => {
         console.error('Failed to fetch posts from Sanity:', err);
         setLoading(false);
+        if (typeof window !== 'undefined') {
+          window.__REVI_READY__ = true;
+        }
       });
   }, []);
 
