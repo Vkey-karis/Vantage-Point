@@ -19,6 +19,22 @@ export default function Work() {
       description:
         'An editorial culinary digital experience with real-time reservation synchronization, custom tasting menu configuration, and sub-second load times.',
       frameType: 'monitor',
+      urlDisplay: 'hoteltemplate254.netlify.app',
+    },
+    {
+      id: 'plugwa-signs',
+      title: 'Plugwa Signs & Branding',
+      type: 'Signage & Branding',
+      url: 'https://plugwasigns-o58v.vercel.app/',
+      image: '/images/plugwasigns.png',
+      alt: 'Plugwa Signs & Branding professional signage company website',
+      categoryLabels: ['WEB DESIGN', 'BRANDING', 'LEAD GENERATION'],
+      filterCategory: 'WEB DESIGN',
+      keyResult: 'Premium Brand Presence Online',
+      description:
+        'A bold, conversion-focused website for a leading Kenyan signage and branding company — showcasing their portfolio, services, and driving client inquiries.',
+      frameType: 'monitor',
+      urlDisplay: 'plugwasigns-o58v.vercel.app',
     },
     {
       id: 'kinetics',
@@ -33,6 +49,7 @@ export default function Work() {
       description:
         'Modern, high-fashion shopping platform featuring smooth gesture navigation, instant bag checkout, and dynamic looksbook styling.',
       frameType: 'phone',
+      urlDisplay: 'e-commercedemovantage.netlify.app',
     },
     {
       id: 'dyel-events',
@@ -47,10 +64,11 @@ export default function Work() {
       description:
         'A clean, high-trust corporate event platform with interactive portfolio filtering and a comprehensive multi-step booking inquiry system.',
       frameType: 'laptop',
+      urlDisplay: 'dyelevents.netlify.app',
     },
   ];
 
-  const filterTabs = ['ALL', 'WEB DESIGN', 'E-COMMERCE', 'CORPORATE'];
+  const filterTabs = ['ALL', 'WEB DESIGN', 'E-COMMERCE', 'CORPORATE', 'BRANDING'];
 
   const filteredProjects =
     activeFilter === 'ALL'
@@ -119,7 +137,7 @@ export default function Work() {
                         <span className="text-xs uppercase tracking-widest text-[#D4AF37] font-semibold">
                           {project.type}
                         </span>
-                        <span className="text-xs font-mono text-gray-400">0{idx + 1} / 03</span>
+                        <span className="text-xs font-mono text-gray-400">0{idx + 1} / 0{projects.length}</span>
                       </div>
 
                       {/* Heading */}
@@ -185,7 +203,7 @@ export default function Work() {
                             <span className="w-2.5 h-2.5 rounded-full bg-[#10b981]/80" />
                           </div>
                           <div className="flex-1 max-w-[240px] mx-auto bg-[#0A192F]/80 rounded text-[10px] text-gray-400 px-2.5 py-0.5 text-center truncate border border-white/5 font-mono">
-                            hoteltemplate254.netlify.app
+                            {project.urlDisplay || project.url}
                           </div>
                         </div>
                         <div className="w-full relative bg-[#050D1A] border-x border-b border-white/10 rounded-b-xl overflow-hidden shadow-2xl flex items-center justify-center">
@@ -231,7 +249,7 @@ export default function Work() {
                             <span className="w-2.5 h-2.5 rounded-full bg-[#10b981]/80" />
                           </div>
                           <div className="flex-1 max-w-[220px] mx-auto bg-[#0A192F]/80 rounded text-[10px] text-gray-400 px-2.5 py-0.5 text-center truncate border border-white/5 font-mono">
-                            dyelevents.netlify.app
+                            {project.urlDisplay || project.url}
                           </div>
                         </div>
                         <div className="w-full bg-[#050D1A] border-x border-b border-white/10 rounded-b-xl overflow-hidden shadow-2xl flex items-center justify-center">
