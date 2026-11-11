@@ -9,52 +9,43 @@ export default function SinglePost() {
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // Normalize slug to prevent issues with trailing whitespace
+  const cleanSlug = slug ? slug.trim() : '';
+
   useEffect(() => {
-    // GROQ query to fetch post along with expanded author, categories, and SEO data
+    const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
+    console.log("Current Page URL:", currentUrl);
+    console.log("Extracted slug from useParams():", slug);
+    console.log("Fetching slug:", cleanSlug);
+
+    if (!cleanSlug) {
+      setLoading(false);
+      return;
+    }
+
+    // Simplified GROQ query matching user requirements
     const query = `*[_type == "post" && slug.current == $slug][0] {
       _id,
       title,
       slug,
-      publishedAt,
       excerpt,
-      mainImage {
-        asset->{
-          _id,
-          url
-        },
-        alt
-      },
-      author->{
-        _id,
+      "name": author->name,
+      "author": author->{
         name,
-        image {
-          asset->{
-            _id,
-            url
-          }
-        },
-        bio
+        image
       },
-      categories[]->{
-        _id,
-        title
-      },
+      mainImage,
+      publishedAt,
       body,
-      seo {
-        metaTitle,
-        metaDescription,
-        shareImage {
-          asset->{
-            _id,
-            url
-          }
-        }
-      }
+      "categories": categories[]->title
     }`;
 
+    // Use withConfig({ useCdn: false }) to bypass edge cache for newly published posts
     client
-      .fetch(query, { slug })
+      .withConfig({ useCdn: false })
+      .fetch(query, { slug: cleanSlug })
       .then((data) => {
+        console.log("Sanity Response:", data);
         setPost(data);
         setLoading(false);
         if (typeof window !== 'undefined') {
@@ -68,7 +59,7 @@ export default function SinglePost() {
           window.__REVI_READY__ = true;
         }
       });
-  }, [slug]);
+  }, [cleanSlug, slug]);
 
   // Custom PortableText Serializers matching Vantage Point brand
   const portableTextComponents = {
@@ -209,14 +200,18 @@ export default function SinglePost() {
         {/* Categories Badges */}
         {post.categories && post.categories.length > 0 && (
           <div className="flex flex-wrap items-center gap-2 mb-6">
-            {post.categories.map((cat) => (
-              <span
-                key={cat._id || cat.title}
-                className="text-[11px] font-semibold tracking-widest uppercase text-[#D4AF37] px-3.5 py-1 rounded-full border border-[#D4AF37]/30 bg-[#D4AF37]/10"
-              >
-                {cat.title}
-              </span>
-            ))}
+            {post.categories.map((cat, idx) => {
+              const label = typeof cat === 'string' ? cat : cat?.title;
+              if (!label) return null;
+              return (
+                <span
+                  key={cat?._id || label || idx}
+                  className="text-[11px] font-semibold tracking-widest uppercase text-[#D4AF37] px-3.5 py-1 rounded-full border border-[#D4AF37]/30 bg-[#D4AF37]/10"
+                >
+                  {label}
+                </span>
+              );
+            })}
           </div>
         )}
 
@@ -252,7 +247,7 @@ export default function SinglePost() {
                 WRITTEN BY
               </span>
               <span className="text-sm font-semibold text-white tracking-wide">
-                {post.author?.name || 'Vantage Point Editorial'}
+                {post.name || post.author?.name || 'Vantage Point Editorial'}
               </span>
             </div>
           </div>
