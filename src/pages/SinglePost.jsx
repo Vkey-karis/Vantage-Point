@@ -23,8 +23,13 @@ export default function SinglePost() {
       return;
     }
 
-    // Simplified GROQ query matching user requirements
-    const query = `*[_type == "post" && slug.current == $slug][0] {
+    // Resilient GROQ query that matches exact slug, tab-prefixed slug, or fuzzy match
+    const query = `*[_type == "post" && (
+      slug.current == $slug ||
+      slug.current == "\t" + $slug ||
+      slug.current == " " + $slug ||
+      slug.current match $slug
+    )][0] {
       _id,
       title,
       slug,

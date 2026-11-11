@@ -128,7 +128,7 @@ export default function Blog() {
                   transition={{ duration: 0.5, delay: idx * 0.1 }}
                 >
                   <Link
-                    to={`/blog/${post.slug?.current}`}
+                    to={`/blog/${post.slug?.current ? post.slug.current.trim() : ''}`}
                     className="group block rounded-2xl bg-[#112240] border border-white/10 hover:border-[#D4AF37] transition-all duration-300 overflow-hidden shadow-xl hover:shadow-[0_15px_35px_rgba(212,175,55,0.12)] flex flex-col h-full transform hover:-translate-y-1"
                   >
                     {/* Main Image */}
