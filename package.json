@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "postinstall": "node scripts/patch-revijs.js",
-    "build": "npx playwright install chromium && vite build && npx revijs render && node scripts/copy-assets.js",
+    "build": "vite build && node scripts/prerender.js && node scripts/copy-assets.js",
+    "prerender": "revijs render",
     "preview": "vite preview"
   },
   "dependencies": {

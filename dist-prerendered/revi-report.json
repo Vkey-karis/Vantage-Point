@@ -1,0 +1,66 @@
+{
+  "generatedAt": "2026-11-11T09:53:54.820Z",
+  "summary": {
+    "total": 3,
+    "ok": 3,
+    "failed": 0,
+    "avgScore": 90
+  },
+  "routes": [
+    {
+      "route": "/",
+      "ms": 9283,
+      "score": 95,
+      "passed": [
+        "Has <title>",
+        "Has meta description",
+        "Has og:title",
+        "Has og:description",
+        "Has og:image",
+        "Has h1",
+        "Images have alt",
+        "Has lang attribute"
+      ],
+      "failed": [
+        "Has canonical link"
+      ]
+    },
+    {
+      "route": "/blog",
+      "ms": 7813,
+      "score": 95,
+      "passed": [
+        "Has <title>",
+        "Has meta description",
+        "Has og:title",
+        "Has og:description",
+        "Has og:image",
+        "Has h1",
+        "Images have alt",
+        "Has lang attribute"
+      ],
+      "failed": [
+        "Has canonical link"
+      ]
+    },
+    {
+      "route": "/blog/how-much-does-a-professional-website-cost-in-kenya-in-2026",
+      "ms": 7797,
+      "score": 80,
+      "passed": [
+        "Has <title>",
+        "Has meta description",
+        "Has og:title",
+        "Has og:description",
+        "Has og:image",
+        "Images have alt",
+        "Has lang attribute"
+      ],
+      "failed": [
+        "Has h1",
+        "Has canonical link"
+      ]
+    }
+  ],
+  "errors": []
+}
