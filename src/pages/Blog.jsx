@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { client, urlFor } from '../lib/sanityClient';
-import { Calendar, ArrowRight, BookOpen, Tag } from 'lucide-react';
+import { Calendar, ArrowRight, BookOpen, Clock } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function Blog() {
@@ -31,7 +31,8 @@ export default function Blog() {
         _id,
         title
       },
-      "fallbackExcerpt": array::join(string::split((pt::text(body)), "")[0..140], "") + "..."
+      "fallbackExcerpt": array::join(string::split((pt::text(body)), "")[0..140], "") + "...",
+      body
     }`;
 
     client
@@ -120,6 +121,16 @@ export default function Blog() {
               const displayExcerpt = post.excerpt || post.fallbackExcerpt;
               const primaryCategory = post.categories && post.categories[0]?.title;
 
+              // Estimated read time from body word count
+              const bodyText = Array.isArray(post.body)
+                ? post.body
+                    .filter((b) => b._type === 'block' && Array.isArray(b.children))
+                    .flatMap((b) => b.children.map((s) => s.text || ''))
+                    .join(' ')
+                : '';
+              const wordCount = bodyText.trim().split(/\s+/).filter(Boolean).length;
+              const readTime = wordCount > 0 ? Math.max(1, Math.ceil(wordCount / 200)) : null;
+
               return (
                 <motion.div
                   key={post._id}
@@ -179,6 +190,14 @@ export default function Blog() {
                             </span>
                           )}
                         </div>
+
+                        {/* Read Time */}
+                        {readTime && (
+                          <div className="flex items-center gap-1 text-[11px] text-gray-400 font-sans mb-3">
+                            <Clock className="w-3 h-3 text-[#D4AF37]" />
+                            <span>{readTime} min read</span>
+                          </div>
+                        )}
 
                         {/* Title: Playfair Display */}
                         <h2 className="font-serif text-xl sm:text-2xl font-bold text-white group-hover:text-[#D4AF37] transition-colors duration-200 line-clamp-2 mb-3">
