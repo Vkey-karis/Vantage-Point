@@ -70,6 +70,35 @@ export default defineType({
       type: 'blockContent',
     }),
     defineField({
+      name: 'keywords',
+      title: 'Keywords',
+      type: 'object',
+      options: {
+        collapsible: true,
+        collapsed: false,
+      },
+      fields: [
+        defineField({
+          name: 'primaryKeyword',
+          title: 'Primary Keyword',
+          type: 'string',
+          placeholder: 'e.g. website cost in kenya 2026',
+          description: 'The main target search query you want this blog post to rank for on Google and AI search engines.',
+        }),
+        defineField({
+          name: 'otherKeywords',
+          title: 'Other Keywords',
+          type: 'array',
+          of: [{type: 'string'}],
+          options: {
+            layout: 'tags',
+          },
+          placeholder: 'Add keyword and press Enter',
+          description: 'Secondary keywords, synonyms, and long-tail search terms. Type each keyword and press Enter.',
+        }),
+      ],
+    }),
+    defineField({
       name: 'seo',
       title: 'SEO & Social Sharing',
       type: 'object',

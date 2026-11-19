@@ -56,7 +56,9 @@ export default function SinglePost() {
       mainImage,
       publishedAt,
       body,
-      "categories": categories[]->title
+      "categories": categories[]->title,
+      keywords,
+      seo
     }`;
 
     client
@@ -92,6 +94,42 @@ export default function SinglePost() {
         if (typeof window !== 'undefined') window.__REVI_READY__ = true;
       });
   }, [cleanSlug, slug]);
+
+  // Update SEO Document Title and Meta Tags dynamically when post data is loaded
+  useEffect(() => {
+    if (!post?.title || typeof document === 'undefined') return;
+
+    // Document Title
+    document.title = `${post.seo?.metaTitle || post.title} | Vantage Point Digital`;
+
+    // Meta Description
+    const metaDesc = post.seo?.metaDescription || post.excerpt;
+    if (metaDesc) {
+      let descTag = document.querySelector('meta[name="description"]');
+      if (!descTag) {
+        descTag = document.createElement('meta');
+        descTag.setAttribute('name', 'description');
+        document.head.appendChild(descTag);
+      }
+      descTag.setAttribute('content', metaDesc);
+    }
+
+    // Meta Keywords (Primary + Other Keywords)
+    const keywordsList = [
+      post.keywords?.primaryKeyword,
+      ...(Array.isArray(post.keywords?.otherKeywords) ? post.keywords.otherKeywords : []),
+    ].filter(Boolean);
+
+    if (keywordsList.length > 0) {
+      let kwTag = document.querySelector('meta[name="keywords"]');
+      if (!kwTag) {
+        kwTag = document.createElement('meta');
+        kwTag.setAttribute('name', 'keywords');
+        document.head.appendChild(kwTag);
+      }
+      kwTag.setAttribute('content', keywordsList.join(', '));
+    }
+  }, [post]);
 
   // ── PortableText Components ─────────────────────────────────────────────────
 

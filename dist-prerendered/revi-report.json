@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-18T15:56:49.553Z",
+  "generatedAt": "2026-11-19T07:34:17.640Z",
   "summary": {
     "total": 3,
     "ok": 3,
@@ -9,7 +9,7 @@
   "routes": [
     {
       "route": "/",
-      "ms": 6870,
+      "ms": 7472,
       "score": 95,
       "passed": [
         "Has <title>",
@@ -27,7 +27,7 @@
     },
     {
       "route": "/blog",
-      "ms": 7974,
+      "ms": 8625,
       "score": 95,
       "passed": [
         "Has <title>",
@@ -45,7 +45,7 @@
     },
     {
       "route": "/blog/how-much-does-a-professional-website-cost-in-kenya-in-2026",
-      "ms": 8105,
+      "ms": 7972,
       "score": 80,
       "passed": [
         "Has <title>",
