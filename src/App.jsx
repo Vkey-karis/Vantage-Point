@@ -4,6 +4,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import AuditModal from './components/AuditModal';
 import FloatingContact from './components/FloatingContact';
+import ScrollToTopButton from './components/ScrollToTopButton';
 import Home from './pages/Home';
 import Blog from './pages/Blog';
 import SinglePost from './pages/SinglePost';
@@ -49,6 +50,9 @@ export default function App() {
 
         {/* Persistent floating WhatsApp / Call button */}
         <FloatingContact />
+
+        {/* Animated Circular Progress Scroll To Top Button */}
+        <ScrollToTopButton />
       </div>
     </BrowserRouter>
   );
