@@ -167,7 +167,7 @@ export default function Pricing({ onOpenAudit }) {
               </span>
             </div>
             <h3 className="font-serif text-2xl sm:text-3xl font-bold text-white leading-tight">
-              Need à la carte services or custom ongoing retainers?
+              Need individual services or custom ongoing retainers?
             </h3>
             <p className="mt-2 text-gray-300 font-sans text-sm sm:text-base leading-relaxed">
               Explore our complete 8-category Kenyan market service catalogue or use our interactive cost calculator to model your setup vs. monthly investments with instant WhatsApp negotiation.
