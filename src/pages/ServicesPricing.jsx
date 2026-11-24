@@ -20,6 +20,8 @@ import {
   ExternalLink,
   ChevronDown,
   ChevronUp,
+  X,
+  Trash2,
 } from 'lucide-react';
 
 const WHATSAPP_PHONE = '254758850766';
@@ -525,6 +527,12 @@ export default function ServicesPricing() {
   const [selectedServices, setSelectedServices] = useState({});
   const [selectedBundleId, setSelectedBundleId] = useState(null);
 
+  // Mobile Collapsible Calculator Drawer & Animation states
+  const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
+  const [lastAddedName, setLastAddedName] = useState(null);
+  const [animateIcon, setAnimateIcon] = useState(false);
+  const [justAddedId, setJustAddedId] = useState(null);
+
   // Client inputs
   const [clientName, setClientName] = useState('');
   const [businessName, setBusinessName] = useState('');
@@ -532,6 +540,18 @@ export default function ServicesPricing() {
 
   // Search filter for catalogue
   const [catalogueFilter, setCatalogueFilter] = useState('');
+
+  // Trigger tactile "Added to Calculator" animation and toast
+  const triggerAddedFeedback = (name, id) => {
+    setLastAddedName(name);
+    setJustAddedId(id);
+    setAnimateIcon(true);
+    setTimeout(() => setAnimateIcon(false), 700);
+    setTimeout(() => setJustAddedId(null), 1200);
+    setTimeout(() => {
+      setLastAddedName((curr) => (curr === name ? null : curr));
+    }, 2600);
+  };
 
   // Notify ReviJs Prerender engine that page is ready
   useEffect(() => {
@@ -569,6 +589,9 @@ export default function ServicesPricing() {
       } else {
         const item = allServicesMap[serviceId];
         const defaultQty = item?.allowQuantity ? item.defaultQty || 1 : 1;
+        if (item?.name) {
+          triggerAddedFeedback(item.name, serviceId);
+        }
         return {
           ...prev,
           [serviceId]: { selected: true, quantity: defaultQty },
@@ -594,6 +617,10 @@ export default function ServicesPricing() {
       setSelectedBundleId(null);
     } else {
       setSelectedBundleId(bundleId);
+      const bundle = PREDEFINED_BUNDLES.find((b) => b.id === bundleId);
+      if (bundle) {
+        triggerAddedFeedback(`${bundle.name} Bundle`, bundleId);
+      }
     }
   };
 
@@ -955,11 +982,14 @@ export default function ServicesPricing() {
                       {category.services.map((service) => {
                         const isSelected = !!selectedServices[service.id]?.selected;
                         const currentQty = selectedServices[service.id]?.quantity || 1;
+                        const isJustAdded = justAddedId === service.id;
 
                         return (
-                          <div
+                          <motion.div
                             key={service.id}
-                            className={`rounded-2xl p-4 border transition-all duration-200 flex flex-col justify-between ${
+                            animate={isJustAdded ? { scale: [1, 1.025, 1] } : {}}
+                            transition={{ duration: 0.25 }}
+                            className={`rounded-2xl p-4 border transition-all duration-200 flex flex-col justify-between relative overflow-hidden ${
                               isSelected
                                 ? 'bg-[#0A192F] border-[#D4AF37] shadow-md ring-1 ring-[#D4AF37]/50'
                                 : 'bg-[#112240] border-white/5 hover:border-white/15'
@@ -970,10 +1000,15 @@ export default function ServicesPricing() {
                                 onClick={() => handleToggleService(service.id)}
                                 className="cursor-pointer flex-1"
                               >
-                                <div className="flex items-center gap-2">
+                                <div className="flex items-center justify-between gap-2">
                                   <h5 className="font-serif text-base font-bold text-white leading-snug">
                                     {service.name}
                                   </h5>
+                                  {isSelected && (
+                                    <span className="text-[9px] font-bold tracking-wider uppercase text-[#D4AF37] bg-[#D4AF37]/10 px-2 py-0.5 rounded-full border border-[#D4AF37]/30 shrink-0">
+                                      Added ✓
+                                    </span>
+                                  )}
                                 </div>
                                 <p className="text-xs text-gray-400 mt-1 leading-relaxed">
                                   {service.description}
@@ -1033,7 +1068,7 @@ export default function ServicesPricing() {
                                 </div>
                               )}
                             </div>
-                          </div>
+                          </motion.div>
                         );
                       })}
                     </div>
@@ -1570,6 +1605,268 @@ export default function ServicesPricing() {
         )}
 
       </div>
+
+      {/* ── Toast Feedback: Item Added to Calculator ── */}
+      <AnimatePresence>
+        {lastAddedName && (
+          <motion.div
+            initial={{ opacity: 0, y: -30, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -20, scale: 0.9 }}
+            transition={{ type: 'spring', stiffness: 450, damping: 25 }}
+            className="fixed top-24 left-1/2 -translate-x-1/2 z-50 px-4 py-2.5 rounded-full bg-[#112240] border-2 border-[#D4AF37] text-white shadow-[0_10px_35px_rgba(0,0,0,0.7)] flex items-center gap-2.5 text-xs font-semibold max-w-[92vw] whitespace-nowrap pointer-events-auto"
+          >
+            <div className="w-5 h-5 rounded-full bg-[#25D366] text-[#0A192F] flex items-center justify-center shrink-0">
+              <Check className="w-3.5 h-3.5 stroke-[3]" />
+            </div>
+            <span className="truncate">
+              Added <span className="text-[#D4AF37]">"{lastAddedName}"</span> to Calculator
+            </span>
+            <button
+              onClick={() => setIsMobileDrawerOpen(true)}
+              className="ml-1 text-[10px] text-[#D4AF37] underline font-bold uppercase tracking-wider shrink-0 lg:hidden"
+            >
+              View
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ── Floating Mobile Collapsible Calculator Button ── */}
+      <div className="fixed bottom-24 right-4 sm:right-8 z-40 lg:hidden">
+        <motion.button
+          onClick={() => setIsMobileDrawerOpen((prev) => !prev)}
+          animate={animateIcon ? { scale: [1, 1.25, 0.92, 1.15, 1], rotate: [0, -8, 8, -5, 5, 0] } : {}}
+          transition={{ duration: 0.55 }}
+          whileTap={{ scale: 0.95 }}
+          className="relative flex items-center gap-2.5 pl-3 pr-4 py-2.5 rounded-full bg-[#112240] border-2 border-[#D4AF37] shadow-[0_10px_35px_rgba(0,0,0,0.85)] text-white hover:border-white transition-all cursor-pointer"
+          aria-label="Open live quotation calculator"
+        >
+          {/* Animated Ping Ring on addition */}
+          {animateIcon && (
+            <span className="absolute inset-0 rounded-full bg-[#D4AF37] animate-ping opacity-60" />
+          )}
+
+          {/* Calculator Icon with gold background */}
+          <div className="relative">
+            <div className="w-9 h-9 rounded-full bg-[#D4AF37] text-[#0A192F] flex items-center justify-center font-bold shadow-md">
+              <Calculator className="w-5 h-5 stroke-[2.5]" />
+            </div>
+
+            {/* Live Count Badge */}
+            {calculations.selectedCount > 0 && (
+              <motion.span
+                key={calculations.selectedCount}
+                initial={{ scale: 0.5 }}
+                animate={{ scale: 1 }}
+                className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-[#25D366] text-[#0A192F] text-[10px] font-extrabold flex items-center justify-center border-2 border-[#112240] shadow-sm"
+              >
+                {calculations.selectedCount}
+              </motion.span>
+            )}
+          </div>
+
+          {/* Text & Running Total */}
+          <div className="text-left font-sans">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-[#D4AF37] block leading-tight">
+              {calculations.selectedCount > 0 ? `${calculations.selectedCount} in Quote` : 'Calculator'}
+            </span>
+            <span className="text-xs font-bold text-white block leading-tight">
+              {calculations.selectedCount > 0 ? formatKsh(calculations.firstMonthTotal) : 'View Estimate'}
+            </span>
+          </div>
+
+          <ChevronUp className="w-4 h-4 text-[#D4AF37] ml-0.5" />
+        </motion.button>
+      </div>
+
+      {/* ── Mobile Collapsible Calculator Drawer / Sheet ── */}
+      <AnimatePresence>
+        {isMobileDrawerOpen && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsMobileDrawerOpen(false)}
+              className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 lg:hidden"
+            />
+
+            {/* Slide-up Sheet */}
+            <motion.div
+              initial={{ y: '100%' }}
+              animate={{ y: 0 }}
+              exit={{ y: '100%' }}
+              transition={{ type: 'spring', damping: 28, stiffness: 300 }}
+              className="fixed bottom-0 left-0 right-0 max-h-[90vh] bg-[#112240] border-t-2 border-[#D4AF37] rounded-t-3xl z-50 flex flex-col shadow-[0_-20px_50px_rgba(0,0,0,0.9)] lg:hidden"
+            >
+              {/* Drag Handle & Top Bar */}
+              <div className="pt-3 pb-2 px-6 border-b border-white/10 shrink-0">
+                <div className="w-12 h-1.5 bg-white/20 rounded-full mx-auto mb-3" />
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="w-7 h-7 rounded-lg bg-[#D4AF37] text-[#0A192F] flex items-center justify-center font-bold">
+                      <Calculator className="w-4 h-4 stroke-[2.5]" />
+                    </div>
+                    <div>
+                      <h3 className="font-serif text-lg font-bold text-white leading-tight">
+                        Your Live Estimate
+                      </h3>
+                      <span className="text-[10px] text-gray-400 font-sans">
+                        {calculations.selectedCount} services selected
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Collapse Button */}
+                  <button
+                    onClick={() => setIsMobileDrawerOpen(false)}
+                    className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-[#0A192F] border border-white/15 text-xs font-bold text-[#D4AF37] hover:text-white transition-colors"
+                  >
+                    <ChevronDown className="w-4 h-4" />
+                    <span>Collapse</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Scrollable Content */}
+              <div className="overflow-y-auto p-5 space-y-5 flex-1">
+                {/* 3 Core Figures */}
+                <div className="space-y-2.5">
+                  <div className="bg-[#0A192F] p-3 rounded-xl border border-white/5 flex items-center justify-between text-xs">
+                    <div>
+                      <span className="text-[10px] font-semibold uppercase text-gray-400 block font-sans">
+                        1. One-time Setup
+                      </span>
+                      <span className="text-gray-400 text-[11px]">Design &amp; launch</span>
+                    </div>
+                    <span className="font-serif text-base font-bold text-white">
+                      {formatKsh(calculations.oneTimeTotal)}
+                    </span>
+                  </div>
+
+                  <div className="bg-[#0A192F] p-3 rounded-xl border border-white/5 flex items-center justify-between text-xs">
+                    <div>
+                      <span className="text-[10px] font-semibold uppercase text-gray-400 block font-sans">
+                        2. Monthly Retainers
+                      </span>
+                      <span className="text-gray-400 text-[11px]">Ongoing growth</span>
+                    </div>
+                    <div className="text-right">
+                      <span className="font-serif text-base font-bold text-white">
+                        {formatKsh(calculations.monthlyTotal)}
+                      </span>
+                      <span className="text-[10px] text-gray-400 block">/ mo</span>
+                    </div>
+                  </div>
+
+                  <div className="bg-gradient-to-r from-[#D4AF37]/20 via-[#112240] to-[#0A192F] p-4 rounded-xl border-2 border-[#D4AF37] flex items-center justify-between">
+                    <div>
+                      <div className="flex items-center gap-1 text-[#D4AF37]">
+                        <Sparkles className="w-3.5 h-3.5" />
+                        <span className="text-[10px] font-bold uppercase tracking-wider font-sans">
+                          3. Estimated 1st Month
+                        </span>
+                      </div>
+                      <span className="text-[10px] text-gray-300 block font-sans mt-0.5">
+                        Setup + 1st month
+                      </span>
+                    </div>
+                    <span className="font-serif text-xl sm:text-2xl font-bold text-white">
+                      {formatKsh(calculations.firstMonthTotal)}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Selected List Breakdown */}
+                <div>
+                  <div className="flex items-center justify-between mb-2.5">
+                    <span className="text-xs font-bold uppercase tracking-wider text-gray-400 font-sans">
+                      Selected Services ({calculations.selectedCount}):
+                    </span>
+                    {calculations.selectedCount > 0 && (
+                      <button
+                        onClick={handleClearAll}
+                        className="text-[11px] text-red-400 hover:underline flex items-center gap-1 font-sans"
+                      >
+                        <RotateCcw className="w-3 h-3" />
+                        <span>Clear All</span>
+                      </button>
+                    )}
+                  </div>
+
+                  {calculations.selectedList.length === 0 ? (
+                    <div className="text-center py-6 border border-dashed border-white/10 rounded-xl p-4 bg-[#0A192F]/50">
+                      <p className="text-xs text-gray-400">
+                        No services selected yet. Collapse this drawer and tap any service to add it.
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
+                      {calculations.selectedList.map((item, idx) => (
+                        <div
+                          key={idx}
+                          className="flex items-center justify-between text-xs p-2.5 rounded-xl bg-[#0A192F] border border-white/5 gap-2"
+                        >
+                          <div className="truncate flex-1">
+                            <p className="font-semibold text-white truncate">{item.name}</p>
+                            <p className="text-[10px] text-gray-400">
+                              {item.billing === 'monthly' ? 'Monthly' : 'One-time'}
+                              {item.quantity > 1 ? ` · Qty: ${item.quantity}` : ''}
+                            </p>
+                          </div>
+
+                          <div className="flex items-center gap-2 shrink-0">
+                            <span className="font-mono text-xs font-bold text-[#D4AF37]">
+                              {item.isCustomQuote
+                                ? 'Quote'
+                                : `${item.isStartingPrice ? 'From ' : ''}${formatKsh(item.lineTotal || item.price)}`}
+                            </span>
+
+                            {/* Remove button */}
+                            <button
+                              onClick={() => {
+                                if (item.isBundle) {
+                                  setSelectedBundleId(null);
+                                } else {
+                                  handleToggleService(item.id);
+                                }
+                              }}
+                              className="p-1 hover:text-red-400 text-gray-400 transition-colors"
+                              aria-label="Remove service"
+                            >
+                              <X className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Primary WhatsApp Negotiation Button */}
+                <button
+                  onClick={handleWhatsAppNegotiate}
+                  className="w-full py-3.5 px-6 rounded-2xl bg-[#25D366] text-[#0A192F] font-sans text-xs uppercase tracking-widest font-bold flex items-center justify-center gap-2 shadow-lg shadow-[#25D366]/20 active:scale-95 transition-all cursor-pointer"
+                >
+                  <MessageCircle className="w-4 h-4 fill-[#0A192F]" />
+                  <span>Discuss &amp; Negotiate on WhatsApp</span>
+                </button>
+
+                {/* Secondary Collapse Button */}
+                <button
+                  onClick={() => setIsMobileDrawerOpen(false)}
+                  className="w-full py-3 px-4 rounded-xl bg-[#0A192F] border border-white/10 text-xs font-semibold text-gray-300 hover:text-white flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                >
+                  <ChevronDown className="w-4 h-4 text-[#D4AF37]" />
+                  <span>Collapse &amp; Add More Services</span>
+                </button>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
