@@ -1,6 +1,7 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Check, Sparkles, ArrowRight } from 'lucide-react';
+import { Check, Sparkles, ArrowRight, Calculator } from 'lucide-react';
 
 export default function Pricing({ onOpenAudit }) {
   const plans = [
@@ -152,6 +153,37 @@ export default function Pricing({ onOpenAudit }) {
               </div>
             </motion.div>
           ))}
+        </div>
+
+        {/* Dedicated CTA to Service Catalogue & Interactive Cost Calculator */}
+        <div className="mt-16 rounded-3xl bg-gradient-to-r from-[#112240] via-[#152747] to-[#112240] border border-[#D4AF37]/30 p-8 sm:p-10 shadow-2xl relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-8">
+          <div className="absolute -top-12 -right-12 w-48 h-48 bg-[#D4AF37]/10 rounded-full blur-3xl pointer-events-none" />
+          
+          <div className="max-w-2xl text-center md:text-left">
+            <div className="inline-flex items-center gap-2 mb-3">
+              <span className="w-4 h-[1.5px] bg-[#D4AF37]" />
+              <span className="text-[11px] font-bold tracking-widest uppercase text-[#D4AF37] font-sans">
+                CUSTOM QUOTE BUILDER &amp; DIRECTORY
+              </span>
+            </div>
+            <h3 className="font-serif text-2xl sm:text-3xl font-bold text-white leading-tight">
+              Need à la carte services or custom ongoing retainers?
+            </h3>
+            <p className="mt-2 text-gray-300 font-sans text-sm sm:text-base leading-relaxed">
+              Explore our complete 8-category Kenyan market service catalogue or use our interactive cost calculator to model your setup vs. monthly investments with instant WhatsApp negotiation.
+            </p>
+          </div>
+
+          <div className="shrink-0 w-full md:w-auto">
+            <Link
+              to="/services-pricing"
+              className="w-full md:w-auto group inline-flex items-center justify-center gap-3 px-8 py-4 rounded-xl bg-[#D4AF37] text-[#0A192F] font-sans text-xs uppercase tracking-widest font-bold hover:bg-[#c49f2c] transition-all duration-300 shadow-xl shadow-[#D4AF37]/20 hover:scale-105 active:scale-95"
+            >
+              <Calculator className="w-4 h-4 text-[#0A192F]" />
+              <span>Full Catalogue &amp; Price Calculator</span>
+              <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" />
+            </Link>
+          </div>
         </div>
 
         {/* Custom enterprise note */}

@@ -7,6 +7,7 @@ import FloatingContact from './components/FloatingContact';
 import Home from './pages/Home';
 import Blog from './pages/Blog';
 import SinglePost from './pages/SinglePost';
+import ServicesPricing from './pages/ServicesPricing';
 
 // Automatically scroll to top on route change
 function ScrollToTop() {
@@ -37,6 +38,7 @@ export default function App() {
           <Route path="/" element={<Home onOpenAudit={handleOpenAudit} />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/:slug" element={<SinglePost />} />
+          <Route path="/services-pricing" element={<ServicesPricing />} />
         </Routes>
 
         {/* Footer with white & gold logo */}

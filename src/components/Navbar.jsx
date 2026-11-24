@@ -22,6 +22,7 @@ export default function Navbar({ onOpenAudit }) {
     { label: 'Services', href: isHome ? '#services' : '/#services', isExternal: false },
     { label: 'Process', href: isHome ? '#process' : '/#process', isExternal: false },
     { label: 'Pricing', href: isHome ? '#pricing' : '/#pricing', isExternal: false },
+    { label: 'Rates & Calculator', href: '/services-pricing', isExternal: false },
     { label: 'Blog', href: '/blog', isExternal: false },
   ];
 

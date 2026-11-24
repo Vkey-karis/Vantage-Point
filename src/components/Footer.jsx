@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Phone, MessageCircle } from 'lucide-react';
 
 const PHONE = '+254758850766';
@@ -29,12 +30,15 @@ export default function Footer() {
           </div>
 
           {/* Quick Links */}
-          <div className="flex flex-wrap items-start gap-y-3 gap-x-8 text-xs font-semibold tracking-widest uppercase text-gray-400">
-            <a href="#work" className="hover:text-[#D4AF37] transition-colors">Work</a>
-            <a href="#services" className="hover:text-[#D4AF37] transition-colors">Services</a>
-            <a href="#process" className="hover:text-[#D4AF37] transition-colors">Process</a>
-            <a href="#pricing" className="hover:text-[#D4AF37] transition-colors">Pricing</a>
-            <a href="#top" className="hover:text-[#D4AF37] transition-colors">Back to top ↑</a>
+          <div className="flex flex-wrap items-start gap-y-3 gap-x-6 text-xs font-semibold tracking-widest uppercase text-gray-400">
+            <a href="/#work" className="hover:text-[#D4AF37] transition-colors">Work</a>
+            <a href="/#services" className="hover:text-[#D4AF37] transition-colors">Services</a>
+            <a href="/#pricing" className="hover:text-[#D4AF37] transition-colors">Pricing</a>
+            <Link to="/services-pricing" className="text-[#D4AF37] hover:underline transition-colors">
+              Rates &amp; Calculator
+            </Link>
+            <Link to="/blog" className="hover:text-[#D4AF37] transition-colors">Journal</Link>
+            <a href="#top" className="hover:text-[#D4AF37] transition-colors">Top ↑</a>
           </div>
 
           {/* Contact Info */}

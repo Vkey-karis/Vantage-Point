@@ -4,6 +4,7 @@ export default {
     '/',
     '/blog',
     '/blog/how-much-does-a-professional-website-cost-in-kenya-in-2026',
+    '/services-pricing',
   ],
   engine: 'browser',
   outputDir: 'dist-prerendered',

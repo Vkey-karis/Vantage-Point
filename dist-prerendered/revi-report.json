@@ -1,15 +1,15 @@
 {
-  "generatedAt": "2026-11-19T07:34:17.640Z",
+  "generatedAt": "2026-11-24T09:46:46.975Z",
   "summary": {
-    "total": 3,
-    "ok": 3,
+    "total": 4,
+    "ok": 4,
     "failed": 0,
-    "avgScore": 90
+    "avgScore": 91
   },
   "routes": [
     {
       "route": "/",
-      "ms": 7472,
+      "ms": 10566,
       "score": 95,
       "passed": [
         "Has <title>",
@@ -27,7 +27,7 @@
     },
     {
       "route": "/blog",
-      "ms": 8625,
+      "ms": 18121,
       "score": 95,
       "passed": [
         "Has <title>",
@@ -45,7 +45,7 @@
     },
     {
       "route": "/blog/how-much-does-a-professional-website-cost-in-kenya-in-2026",
-      "ms": 7972,
+      "ms": 14733,
       "score": 80,
       "passed": [
         "Has <title>",
@@ -58,6 +58,24 @@
       ],
       "failed": [
         "Has h1",
+        "Has canonical link"
+      ]
+    },
+    {
+      "route": "/services-pricing",
+      "ms": 2728,
+      "score": 95,
+      "passed": [
+        "Has <title>",
+        "Has meta description",
+        "Has og:title",
+        "Has og:description",
+        "Has og:image",
+        "Has h1",
+        "Images have alt",
+        "Has lang attribute"
+      ],
+      "failed": [
         "Has canonical link"
       ]
     }
